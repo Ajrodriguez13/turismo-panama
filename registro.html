@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar Sitio Turístico</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="mapa.html">Ver Mapa</a></li>
+        <li><a href="registro.html">Registrar Sitio</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Registrar un nuevo sitio turístico</h2>
+    <form id="sitioForm">
+      <label>Nombre del sitio:<br><input type="text" name="nombre" required></label><br>
+      <label>Descripción:<br><textarea name="descripcion" required></textarea></label><br>
+      <label>Latitud:<br><input type="number" step="any" name="latitud" required></label><br>
+      <label>Longitud:<br><input type="number" step="any" name="longitud" required></label><br>
+      <label>Imagen:<br><input type="file" name="imagen" accept="image/*" required></label><br>
+      <button type="submit">Registrar</button>
+    </form>
+    <div id="mensaje"></div>
+  </main>
+
+  <script>
+    document.getElementById('sitioForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('mensaje').textContent = 'Enviando...';
+
+      // Aquí va la lógica para enviar a tu API con fetch o Axios
+      // Lógica pendiente para integrar con AWS (API Gateway / Lambda)
+
+      document.getElementById('mensaje').textContent = 'Sitio registrado exitosamente (simulado).';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa de Sitios Turísticos</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://js.arcgis.com/4.29/"></script>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="mapa.html">Ver Mapa</a></li>
+        <li><a href="registro.html">Registrar Sitio</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Mapa Interactivo</h2>
+    <div id="mapa" style="height: 500px;"></div>
+  </main>
+
+  <script>
+    require(["esri/Map", "esri/views/MapView"], (Map, MapView) => {
+      const map = new Map({ basemap: "streets-navigation-vector" });
+      const view = new MapView({
+        container: "mapa",
+        map: map,
+        center: [-79.5, 8.5], // Panamá
+        zoom: 7
+      });
+
+      // Aquí se pueden cargar puntos desde la API con fetch y agregarlos al mapa
+    });
+  </script>
+</body>
+</html>
