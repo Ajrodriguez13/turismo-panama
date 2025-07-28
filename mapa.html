@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mapa de Sitios Turísticos</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
+  <link rel="stylesheet" href="styles.css" />
+  
+  <!-- ArcGIS JS API -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
   <script src="https://js.arcgis.com/4.29/"></script>
 </head>
 
@@ -26,8 +28,18 @@
   </main>
 
   <script>
-    require(["esri/Map", "esri/views/MapView"], (Map, MapView) => {
-      const map = new Map({ basemap: "streets-navigation-vector" });
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/Graphic",
+      "esri/layers/GraphicsLayer",
+      "esri/symbols/PictureMarkerSymbol"
+    ], (Map, MapView, Graphic, GraphicsLayer, PictureMarkerSymbol) => {
+      
+      const map = new Map({
+        basemap: "streets-navigation-vector"
+      });
+
       const view = new MapView({
         container: "mapa",
         map: map,
@@ -35,7 +47,45 @@
         zoom: 7
       });
 
-      // Aquí se pueden cargar puntos desde la API con fetch y agregarlos al mapa
+      const graphicsLayer = new GraphicsLayer();
+      map.add(graphicsLayer);
+
+      // Llamar a la API GET /sitios
+      fetch("https://9obu4mao37.execute-api.us-east-1.amazonaws.com/dev/sitios")
+        .then(res => res.json())
+        .then(data => {
+          data.forEach(sitio => {
+            const punto = {
+              type: "point",
+              longitude: sitio.longitud,
+              latitude: sitio.latitud
+            };
+
+            const simbolo = {
+              type: "simple-marker",
+              style: "circle",
+              color: "blue",
+              size: "12px"
+            };
+
+            const popupInfo = {
+              title: sitio.nombre,
+              content: `
+                <strong>Descripción:</strong> ${sitio.descripcion}<br>
+                <img src="${sitio.imagenUrl}" alt="${sitio.nombre}" style="width:100%; max-width:200px; margin-top:5px;">
+              `
+            };
+
+            const grafico = new Graphic({
+              geometry: punto,
+              symbol: simbolo,
+              popupTemplate: popupInfo
+            });
+
+            graphicsLayer.add(grafico);
+          });
+        })
+        .catch(error => console.error("Error cargando sitios:", error));
     });
   </script>
 </body>
