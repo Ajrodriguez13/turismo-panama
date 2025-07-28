@@ -33,13 +33,49 @@
   <script>
     document.getElementById('sitioForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      document.getElementById('mensaje').textContent = 'Enviando...';
+      const mensaje = document.getElementById('mensaje');
+      mensaje.textContent = 'Enviando...';
 
-      // Aquí va la lógica para enviar a tu API con fetch o Axios
-      // Lógica pendiente para integrar con AWS (API Gateway / Lambda)
+      const form = e.target;
+      const imagenFile = form.imagen.files[0];
+      const reader = new FileReader();
 
-      document.getElementById('mensaje').textContent = 'Sitio registrado exitosamente (simulado).';
+      reader.onloadend = async () => {
+        const imagenBase64 = reader.result.split(',')[1]; // quitar encabezado 'data:image/...;base64,'
+
+        const datos = {
+          nombre: form.nombre.value,
+          descripcion: form.descripcion.value,
+          latitud: form.latitud.value,
+          longitud: form.longitud.value,
+          imagenBase64: imagenBase64
+        };
+
+        try {
+          const res = await fetch('https://9obu4mao37.execute-api.us-east-1.amazonaws.com/dev/sitios', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+          });
+
+          const json = await res.json();
+
+          if (res.ok) {
+            mensaje.textContent = '✅ ' + json.mensaje;
+            form.reset();
+          } else {
+            mensaje.textContent = '❌ Error: ' + (json.error || 'No se pudo registrar el sitio');
+          }
+
+        } catch (err) {
+          console.error(err);
+          mensaje.textContent = '❌ Error al conectar con la API.';
+        }
+      };
+
+      reader.readAsDataURL(imagenFile);
     });
   </script>
+
 </body>
 </html>
