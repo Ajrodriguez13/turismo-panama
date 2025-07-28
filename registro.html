@@ -32,9 +32,9 @@
       <label>Imagen (máx. 1MB):<br>
         <input type="file" name="imagen" accept="image/*" required>
       </label><br>
-
-      <div id="miniMapa" style="height: 300px; margin-top: 20px;"></div>
       <p>Haz clic en el mapa para seleccionar la ubicación.</p>
+      <div id="miniMapa" style="height: 300px; margin-top: 20px;"></div>
+      
 
       <!-- Botón de registro más abajo -->
       <div style="margin-top: 20px;">
@@ -92,7 +92,7 @@
           const json = await res.json();
 
           if (res.ok) {
-            mensaje.textContent = 'Bien.' + json.mensaje;
+            mensaje.textContent = '¡Bien! ' + json.mensaje;
             form.reset();
           } else {
             mensaje.textContent = 'Error: ' + (json.error || 'No se pudo registrar el sitio');
