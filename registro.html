@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Registrar Sitio Turístico</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.29/"></script>
 </head>
 <body>
   <header>
@@ -22,12 +24,25 @@
     <form id="sitioForm">
       <label>Nombre del sitio:<br><input type="text" name="nombre" required></label><br>
       <label>Descripción:<br><textarea name="descripcion" required></textarea></label><br>
-      <label>Latitud:<br><input type="number" step="any" name="latitud" required></label><br>
-      <label>Longitud:<br><input type="number" step="any" name="longitud" required></label><br>
-      <label>Imagen:<br><input type="file" name="imagen" accept="image/*" required></label><br>
-      <button type="submit">Registrar</button>
+      
+      <!-- Campos ocultos de latitud y longitud -->
+      <input type="hidden" name="latitud" required />
+      <input type="hidden" name="longitud" required />
+
+      <label>Imagen (máx. 1MB):<br>
+        <input type="file" name="imagen" accept="image/*" required>
+      </label><br>
+
+      <div id="miniMapa" style="height: 300px; margin-top: 20px;"></div>
+      <p>Haz clic en el mapa para seleccionar la ubicación.</p>
+
+      <!-- Botón de registro más abajo -->
+      <div style="margin-top: 20px;">
+        <button type="submit">Registrar</button>
+      </div>
     </form>
-    <div id="mensaje"></div>
+
+    <div id="mensaje" style="margin-top: 15px;"></div>
   </main>
 
   <script>
@@ -38,16 +53,32 @@
 
       const form = e.target;
       const imagenFile = form.imagen.files[0];
+
+      // Validar que latitud y longitud estén definidos
+      const lat = form.latitud.value.trim();
+      const lon = form.longitud.value.trim();
+
+      if (!lat || !lon) {
+        mensaje.textContent = 'Debes seleccionar una ubicación en el mapa.';
+        return;
+      }
+
+      // Validar tamaño de imagen (máx. 1MB)
+      if (imagenFile.size > 1024 * 1024) {
+        mensaje.textContent = 'La imagen supera el tamaño máximo permitido de 1 MB.';
+        return;
+      }
+
       const reader = new FileReader();
 
       reader.onloadend = async () => {
-        const imagenBase64 = reader.result.split(',')[1]; // quitar encabezado 'data:image/...;base64,'
+        const imagenBase64 = reader.result.split(',')[1];
 
         const datos = {
           nombre: form.nombre.value,
           descripcion: form.descripcion.value,
-          latitud: form.latitud.value,
-          longitud: form.longitud.value,
+          latitud: lat,
+          longitud: lon,
           imagenBase64: imagenBase64
         };
 
@@ -61,15 +92,14 @@
           const json = await res.json();
 
           if (res.ok) {
-            mensaje.textContent = '✅ ' + json.mensaje;
+            mensaje.textContent = 'Bien.' + json.mensaje;
             form.reset();
           } else {
-            mensaje.textContent = '❌ Error: ' + (json.error || 'No se pudo registrar el sitio');
+            mensaje.textContent = 'Error: ' + (json.error || 'No se pudo registrar el sitio');
           }
-
         } catch (err) {
           console.error(err);
-          mensaje.textContent = '❌ Error al conectar con la API.';
+          mensaje.textContent = 'Error al conectar con la API.';
         }
       };
 
@@ -77,5 +107,49 @@
     });
   </script>
 
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/Graphic"
+    ], (Map, MapView, Graphic) => {
+      const miniMap = new Map({ basemap: "streets" });
+      const miniView = new MapView({
+        container: "miniMapa",
+        map: miniMap,
+        center: [-79.5, 8.5],
+        zoom: 7
+      });
+
+      let markerGraphic = null;
+
+      miniView.on("click", function (event) {
+        const point = event.mapPoint;
+        const lat = point.latitude.toFixed(8);
+        const lon = point.longitude.toFixed(8);
+
+        document.querySelector('input[name="latitud"]').value = lat;
+        document.querySelector('input[name="longitud"]').value = lon;
+
+        const marker = new Graphic({
+          geometry: point,
+          symbol: {
+            type: "simple-marker",
+            color: "red",
+            size: "10px"
+          }
+        });
+
+        // Eliminar marcador anterior si existe
+        if (markerGraphic) {
+          miniView.graphics.remove(markerGraphic);
+        }
+
+        markerGraphic = marker;
+        miniView.graphics.add(marker);
+      });
+    });
+  </script>
 </body>
 </html>
