@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explora Panamá</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panaventuras</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="https://imagenes-pagina-web.s3.us-east-1.amazonaws.com/logo.png" type="image/png">
+
 </head>
 <body>
   <header>
-    <nav>
+    <nav style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; padding:0 2rem;">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <img src="https://imagenes-pagina-web.s3.us-east-1.amazonaws.com/logo.png" alt="Panaventuras" style="height:38px;">
+        <span style="color:white; font-size:1.3rem; font-weight:bold;">Panaventuras</span>
+      </div>
       <ul>
         <li><a href="index.html">Inicio</a></li>
         <li><a href="mapa.html">Ver Mapa</a></li>
@@ -19,8 +25,59 @@
 
   <main class="landing">
     <h1>Descubre y comparte los tesoros ocultos de Panamá</h1>
-    <p>Explora sitios turísticos emergentes o registra uno nuevo en el mapa colaborativo.</p>
+    <p>Bienvenido a la plataforma colaborativa para registrar y explorar sitios turísticos emergentes. Panamá es mucho más que sus playas conocidas: aquí descubrirás rincones únicos recomendados por la comunidad.</p>
     <a class="btn" href="mapa.html">Explorar mapa</a>
+
+    <section style="margin-top: 3rem;">
+      <h2>Lugares que no sabías que existían</h2>
+      <p>Desde senderos poco explorados en Darién hasta cascadas escondidas en Coclé, descubre sitios únicos registrados por otros viajeros:</p>
+      <ul>
+        <li><strong>Pozo Azul – Veraguas:</strong> Un paraíso escondido con aguas cristalinas y senderos rodeados de naturaleza.</li>
+        <li><strong>Isla Iguana – Los Santos:</strong> Refugio de vida silvestre con arrecifes de coral, ideal para snorkel y fotografía.</li>
+        <li><strong>Reserva Cerro Ancón – Ciudad de Panamá:</strong> Mirador natural con vistas espectaculares del Canal y la ciudad.</li>
+      </ul>
+    </section>
+
+    <section style="margin-top: 3rem;">
+      <h2>¿Tienes un sitio para compartir?</h2>
+      <p>Contribuye al turismo local y sostenible registrando un nuevo sitio. Es fácil, solo necesitas una descripción, ubicación y una imagen.</p>
+      <a class="btn" href="registro.html">Registrar nuevo sitio</a>
+    </section>
+
+    <section style="margin-top: 3rem;">
+      <h2>¿Por qué usar esta plataforma?</h2>
+      <ul>
+        <li>Visibilidad para sitios turísticos emergentes</li>
+        <li>Impulso al turismo interno y sostenible</li>
+        <li>Construcción colectiva del mapa turístico de Panamá</li>
+      </ul>
+    </section>
+
+    <section style="margin-top: 3rem;">
+      <h2 style="text-align: center;">Lo mejor de Panamá</h2>
+      <div class="grid-categorias">
+        <div class="card">
+          <img src="https://imagenes-pagina-web.s3.us-east-1.amazonaws.com/1.jpg" alt="Cultura Afro">
+          <h3>Cultura Afro</h3>
+          <p>La cultura afro en Panamá es parte vibrante del mosaico cultural del país. Con raíces africanas y tradiciones propias, representa música, danza y gastronomía únicas.</p>
+          <a href="#">Ver más</a>
+        </div>
+
+        <div class="card">
+          <img src="https://imagenes-pagina-web.s3.amazonaws.com/2.jpg" alt="Playas">
+          <h3>Mejores Playas e Islas</h3>
+          <p>Desde el Pacífico hasta el Caribe, Panamá ofrece islas paradisíacas y playas de arena blanca ideales para relajarte o practicar deportes acuáticos.</p>
+          <a href="#">Ver más</a>
+        </div>
+
+        <div class="card">
+          <img src="https://imagenes-pagina-web.s3.amazonaws.com/3.jpg" alt="Aves">
+          <h3>Avistamiento de Aves</h3>
+          <p>Panamá es uno de los destinos más ricos en biodiversidad de aves del mundo. Perfecto para observadores y fotógrafos de naturaleza.</p>
+          <a href="#">Ver más</a>
+        </div>
+      </div>
+    </section>
   </main>
 </body>
 </html>
