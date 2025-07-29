@@ -6,6 +6,8 @@
   <title>Mapa de Sitios Turísticos | Panaventuras</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="https://imagenes-pagina-web.s3.us-east-1.amazonaws.com/logo.png" type="image/png">
+
+  <!-- ArcGIS JS API -->
   <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
   <script src="https://js.arcgis.com/4.29/"></script>
 </head>
@@ -36,9 +38,10 @@
       "esri/views/MapView",
       "esri/Graphic",
       "esri/layers/GraphicsLayer",
-      "esri/symbols/PictureMarkerSymbol"
-    ], (Map, MapView, Graphic, GraphicsLayer, PictureMarkerSymbol) => {
-      
+      "esri/symbols/PictureMarkerSymbol",
+      "esri/widgets/Search"
+    ], (Map, MapView, Graphic, GraphicsLayer, PictureMarkerSymbol, Search) => {
+
       const map = new Map({
         basemap: "streets-navigation-vector"
       });
@@ -53,7 +56,18 @@
       const graphicsLayer = new GraphicsLayer();
       map.add(graphicsLayer);
 
-      // Llamar a la API GET /sitios
+      // Agregar el widget de búsqueda
+      const searchWidget = new Search({
+        view: view,
+        placeholder: "Buscar ubicación en Panamá",
+        includeDefaultSources: true
+      });
+      view.ui.add(searchWidget, {
+        position: "top-right",
+        index: 0
+      });
+
+      // Obtener los sitios turísticos desde la API
       fetch("https://9obu4mao37.execute-api.us-east-1.amazonaws.com/dev/sitios")
         .then(res => res.json())
         .then(data => {
@@ -66,11 +80,10 @@
 
             const simbolo = {
               type: "picture-marker",
-              url: "https://cdn-icons-png.flaticon.com/512/684/684908.png", // Ícono tipo 📍
+              url: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
               width: "24px",
               height: "24px"
             };
-
 
             const popupInfo = {
               title: sitio.nombre,
