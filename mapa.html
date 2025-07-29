@@ -7,9 +7,25 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="https://imagenes-pagina-web.s3.us-east-1.amazonaws.com/logo.png" type="image/png">
 
-  <!-- ArcGIS JS API -->
   <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
   <script src="https://js.arcgis.com/4.29/"></script>
+  <style>
+    #mapa {
+      position: relative;
+      height: 500px;
+    }
+    #coordenadas {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      box-shadow: 0 0 5px rgba(0,0,0,0.15);
+      z-index: 5;
+    }
+  </style>
 </head>
 
 <body>
@@ -29,7 +45,9 @@
 
   <main>
     <h2>Mapa Interactivo</h2>
-    <div id="mapa" style="height: 500px;"></div>
+    <div id="mapa">
+      <div id="coordenadas">Lat: --, Lon: --</div>
+    </div>
   </main>
 
   <script>
@@ -39,35 +57,46 @@
       "esri/Graphic",
       "esri/layers/GraphicsLayer",
       "esri/symbols/PictureMarkerSymbol",
-      "esri/widgets/Search"
-    ], (Map, MapView, Graphic, GraphicsLayer, PictureMarkerSymbol, Search) => {
+      "esri/widgets/Search",
+      "esri/widgets/BasemapGallery",
+      "esri/widgets/Expand"
+    ], (Map, MapView, Graphic, GraphicsLayer, PictureMarkerSymbol, Search, BasemapGallery, Expand) => {
 
-      const map = new Map({
-        basemap: "streets-navigation-vector"
-      });
+      const map = new Map({ basemap: "streets-navigation-vector" });
 
       const view = new MapView({
         container: "mapa",
         map: map,
-        center: [-79.5, 8.5], // Panamá
+        center: [-79.5, 8.5],
         zoom: 7
       });
 
       const graphicsLayer = new GraphicsLayer();
       map.add(graphicsLayer);
 
-      // Agregar el widget de búsqueda
-      const searchWidget = new Search({
+      // Search Widget
+      const searchWidget = new Search({ view: view });
+      view.ui.add(searchWidget, "top-right");
+
+      // Basemap Gallery in Expand
+      const basemapGallery = new BasemapGallery({ view: view });
+      const basemapExpand = new Expand({
         view: view,
-        placeholder: "Buscar ubicación en Panamá",
-        includeDefaultSources: true
+        content: basemapGallery,
+        expanded: false
       });
-      view.ui.add(searchWidget, {
-        position: "top-right",
-        index: 0
+      view.ui.add(basemapExpand, "top-right");
+
+      // Coordenadas
+      const coordDiv = document.getElementById("coordenadas");
+      view.on("pointer-move", (event) => {
+        const point = view.toMap({ x: event.x, y: event.y });
+        if (point) {
+          coordDiv.textContent = `Lat: ${point.latitude.toFixed(5)}, Lon: ${point.longitude.toFixed(5)}`;
+        }
       });
 
-      // Obtener los sitios turísticos desde la API
+      // Cargar sitios turísticos
       fetch("https://9obu4mao37.execute-api.us-east-1.amazonaws.com/dev/sitios")
         .then(res => res.json())
         .then(data => {
